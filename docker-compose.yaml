@@ -1,0 +1,34 @@
+services:
+  service-bus:
+    image: 'rabbitmq:3.13.7-management'
+    hostname: service-bus
+    container_name: service-bus
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+  legitimate-service-joke:
+    container_name: legitimate-service-joke
+    env_file: ./.env
+    depends_on:
+      - service-bus
+    build:
+      context: ./legitimate-service-joke
+      dockerfile: ./Dockerfile
+  agent:
+    container_name: agent
+    env_file: ./.env
+    depends_on:
+      - legitimate-service-joke
+    build:
+      context: ./agent
+      dockerfile: ./Dockerfile
+  ui:
+    container_name: ui
+    env_file: ./.env
+    depends_on:
+      - agent
+    build:
+      context: ./ui
+      dockerfile: ./Dockerfile
+    ports:
+      - "8501:8501"
