@@ -1,31 +1,28 @@
 import asyncio
 import json
-import os
 import sys
 import threading
 
 import aiormq
 from aiormq.abc import AbstractChannel
-from dotenv import load_dotenv
 from loguru import logger
 
+from env import RABBIT_CONNECTION
 from joke.joke_generator import JokeGenerator
 from mcpserver import JokeMcpServer
-
-load_dotenv()
 
 joke_generator = JokeGenerator()
 
 
 async def on_message(message: aiormq.abc.DeliveredMessage):
-    logger.info(f"Message body is: {message.body!r}")
+    logger.info(f'Message body is: {message.body!r}')
 
     msg = json.loads(message.body)
 
     if len(msg['topic']) > 0:
-        joke = joke_generator.tell_generic_joke()
-    else:
         joke = joke_generator.tell_topic_joke(msg['topic'])
+    else:
+        joke = joke_generator.tell_generic_joke()
 
     await message.channel.basic_publish(
         json.dumps({'joke': joke, 'user_id': msg['user_id']}).encode(),
@@ -35,7 +32,7 @@ async def on_message(message: aiormq.abc.DeliveredMessage):
 
 
 async def run_rabbit_consumer():
-    connection = await aiormq.connect(f'{os.environ.get("RABBIT_CONNECTION")}')
+    connection = await aiormq.connect(RABBIT_CONNECTION)
 
     channel = await connection.channel()
     await channel.queue_declare('joke.prepared', durable=True)
@@ -61,7 +58,7 @@ def run_loop_in_thread(loop):
 
 
 async def main():
-    connection = await aiormq.connect(f'{os.environ.get("RABBIT_CONNECTION")}')
+    connection = await aiormq.connect(RABBIT_CONNECTION)
 
     channel = await connection.channel()
 

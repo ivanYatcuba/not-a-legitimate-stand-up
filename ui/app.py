@@ -1,4 +1,5 @@
 import threading
+import uuid
 
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
@@ -15,9 +16,16 @@ if "websocket_connection" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+def print_msg(role: str, msg: str):
+    with st.chat_message(role, avatar="./ui/comic_avatar.png" if role == "assistant" else None):
+        if msg.startswith("https://"):
+            st.audio(msg)
+        else:
+            st.markdown(msg)
+
 if st.session_state.websocket_thread is None or not st.session_state.websocket_thread.is_alive():
     print("Starting WebSocket connection...")
-    websocket_thread = threading.Thread(target=run_websocket, daemon=True, args=('123',))
+    websocket_thread = threading.Thread(target=run_websocket, daemon=True, args=(str(uuid.uuid4()),))
     add_script_run_ctx(websocket_thread)
     websocket_thread.start()
     st.session_state.websocket_thread = websocket_thread
@@ -25,11 +33,9 @@ if st.session_state.websocket_thread is None or not st.session_state.websocket_t
 st.title("Not a legimate joker")
 
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    print_msg(message["role"], message["content"])
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    print_msg("user", prompt)
     st.session_state.websocket_connection.send(json.dumps({"question": prompt}))

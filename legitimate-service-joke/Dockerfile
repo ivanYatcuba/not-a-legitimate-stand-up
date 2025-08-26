@@ -1,7 +1,10 @@
-FROM python:3.12
+FROM pytorch/pytorch
 
-RUN pip3 install --upgrade pip
-RUN pip3 install torch
+RUN conda update -n base -c defaults conda && \
+    conda install -y python=3.12 && \
+    conda update --all --yes \
+
+RUN python -m pip install --upgrade pip==24.
 RUN pip3 install -r requirements.txt
 
 WORKDIR /app

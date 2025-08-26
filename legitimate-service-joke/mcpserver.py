@@ -7,6 +7,8 @@ from mcp.server.fastmcp import FastMCP, Context
 from mcp.server.fastmcp.prompts import Prompt
 from pydantic import BaseModel
 
+from env import MCP_PORT
+
 
 class JokeScheduleResponse(BaseModel):
     is_schedule_successful: bool
@@ -14,7 +16,7 @@ class JokeScheduleResponse(BaseModel):
 
 class JokeMcpServer:
     def __init__(self, rabbit_channel: AbstractChannel):
-        self.joke_mcp_server = FastMCP("JokeGenerator", host="0.0.0.0", port=8080)
+        self.joke_mcp_server = FastMCP("JokeGenerator", host="0.0.0.0", port=MCP_PORT)
         self.rabbit_channel = rabbit_channel
 
         self.joke_mcp_server.add_prompt(Prompt(name='system_prompt', fn=self.system_prompt))

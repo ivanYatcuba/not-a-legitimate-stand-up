@@ -1,13 +1,11 @@
 import asyncio
 import json
-import os
 import threading
 import uuid
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 
 import aiormq
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
@@ -24,7 +22,7 @@ from pydantic import BaseModel
 from starlette.websockets import WebSocket
 from typing_extensions import TypedDict
 
-load_dotenv()
+from env import RABBIT_CONNECTION, MCP_PATH
 
 websocket_clients = {}
 
@@ -48,7 +46,7 @@ async def on_message(message: aiormq.abc.DeliveredMessage):
 
 
 async def start_rabbit_listener():
-    connection = await aiormq.connect(f"{os.environ.get("RABBIT_CONNECTION")}")
+    connection = await aiormq.connect(RABBIT_CONNECTION)
     channel = await connection.channel()
     declare_ok = await channel.queue_declare('joke.prepared', durable=True)
 
@@ -113,7 +111,7 @@ async def websocket_endpoint(websocket: WebSocket, thread_id: str):
     client = MultiServerMCPClient(
         {
             "joke_tool": {
-                "url": f'{os.environ.get("MCP_PATH")}',
+                "url": MCP_PATH,
                 "transport": "streamable_http",
                 "headers": {"user_id": user_id}
             }
