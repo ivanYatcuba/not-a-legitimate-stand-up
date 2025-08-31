@@ -2,7 +2,7 @@
 Generate jokes voiced by famous criminal using (local) LLM and TTS models
 
 
-[![Watch the video](demo.png)](https://raw.githubusercontent.com/ivanYatcuba/not-a-legitimate-stand-up/blob/main/demo_vid.mp4)
+[![Watch the video](demo.png)](https://raw.githubusercontent.com/ivanYatcuba/not-a-legitimate-stand-up/main/demo_vid.mp4)
 
 
 ## app consist of modules
