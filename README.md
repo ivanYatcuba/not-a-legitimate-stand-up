@@ -1,3 +1,8 @@
+## not-a-legitimate-stand-up
+Generate jokes voiced by famous criminal using (local) LLM and TTS models
+
+![demo](demo.png "demo")
+
 ## app consist of modules
 * agent
 * legitimate-service-joke
