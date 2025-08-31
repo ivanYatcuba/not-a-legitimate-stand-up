@@ -2,13 +2,24 @@ services:
   service-bus:
     image: 'rabbitmq:3.13.7-management'
     hostname: service-bus
+    env_file: ./.env.docker
     container_name: service-bus
     ports:
       - '5672:5672'
       - '15672:15672'
   legitimate-service-joke:
     container_name: legitimate-service-joke
-    env_file: ./.env
+    volumes:
+      - ./models:/app/models
+    env_file: ./.env.docker
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                count: all # or specify a number like 1, or specific device IDs/UUIDs
+                capabilities: [ gpu ]
     depends_on:
       - service-bus
     build:
@@ -16,7 +27,7 @@ services:
       dockerfile: ./Dockerfile
   agent:
     container_name: agent
-    env_file: ./.env
+    env_file: ./.env.docker
     depends_on:
       - legitimate-service-joke
     build:
@@ -24,7 +35,7 @@ services:
       dockerfile: ./Dockerfile
   ui:
     container_name: ui
-    env_file: ./.env
+    env_file: ./.env.docker
     depends_on:
       - agent
     build:

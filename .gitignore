@@ -18,4 +18,7 @@ build/
 *.egg-info/
 
 
-models/
+models/fcpe.pt
+models/hubert_base.pt
+models/rmvpe.pt
+models/huggingface

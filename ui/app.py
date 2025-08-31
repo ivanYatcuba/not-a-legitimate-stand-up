@@ -4,6 +4,7 @@ import uuid
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 from ws import *
+from env import AVATAR_PATH
 
 if "websocket_thread" not in st.session_state:
     print("WebSocket thread not found")
@@ -17,7 +18,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 def print_msg(role: str, msg: str):
-    with st.chat_message(role, avatar="./ui/comic_avatar.png" if role == "assistant" else None):
+    with st.chat_message(role, avatar=AVATAR_PATH if role == "assistant" else None):
         if msg.startswith("https://"):
             st.audio(msg)
         else:

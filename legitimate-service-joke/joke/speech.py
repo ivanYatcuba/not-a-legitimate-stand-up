@@ -13,14 +13,14 @@ from ukrainian_word_stress import Stressifier, StressSymbol
 class VoiceActorService:
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-    def __init__(self, root_dir):
-        self.root_dir = root_dir
+    def __init__(self, models_dir):
+        self.models_dir = models_dir
         self.stressify = Stressifier()
         self.model = StyleTTS2(hf_path='patriotyk/styletts2_ukrainian_multispeaker_hifigan', device=self.device)
 
     def say_as_yanik(self, text: str, output_file: str = 'test.wav', model_name: str = 'yanik-selftrained') -> str:
-        self.__text_to_speech(text, f'{self.root_dir}/models/yanik.pt', output_file)
-        return self.__convert_speech_to_yanik(output_file, f'{self.root_dir}/models', model_name)
+        self.__text_to_speech(text, f'{self.models_dir}/yanik.pt', output_file)
+        return self.__convert_speech_to_yanik(output_file, self.models_dir, model_name)
 
     def __convert_speech_to_yanik(self, audio_file: str, models_dir: str, model_name: str = 'yanik-selftrained') -> str:
         result = infer_audio(

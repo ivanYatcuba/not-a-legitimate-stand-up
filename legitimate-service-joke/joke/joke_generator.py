@@ -12,10 +12,7 @@ from env import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET
 
 
 class JokeGenerator:
-    __model_name = 'google/gemma-3-1b-it'
     __device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-
-    vas = VoiceActorService('/home/ivan/git/not-a-legitimate-stand-up')
 
     __system_prompt = {
         "role": "system",
@@ -23,9 +20,10 @@ class JokeGenerator:
                      "text": "Output ONLY one short joke in Ukrainian. Do NOT add other text."}, ]
     }
 
-    def __init__(self):
+    def __init__(self, llm: str, models_dir: str):
+        self.vas= VoiceActorService(models_dir)
         self.model = AutoModelForCausalLM.from_pretrained(
-            self.__model_name,
+            llm,
             torch_dtype=torch.bfloat16,
             quantization_config=BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -37,7 +35,7 @@ class JokeGenerator:
             device_map=self.__device,
         )
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.__model_name,
+            self.model.name_or_path,
             use_default_system_prompt=False,
             device_map=self.model.device,
         )

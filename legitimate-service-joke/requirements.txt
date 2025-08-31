@@ -1,17 +1,19 @@
+mcp==1.13.1
+numpy==2.2.6
+packaging==25.0
+tensorboardX==2.6.4
+numba==0.61.2
+
 torch==2.8.0
 transformers==4.55.0
 bitsandbytes==0.47.0
 peft==0.17.1
-accelerate==1.10.0
-trl==0.21.0
 python-dotenv==1.1.1
 flash-attn==2.8.3
 loguru==0.7.3
 
-
 local-attention==1.11.2
 av==15.0.0
-ffmpeg==1.4
 librosa==0.11.0
 lib==4.0.0
 pydub==0.25.1
@@ -21,7 +23,11 @@ pyworld==0.3.5
 torchcrepe==0.0.24
 torchfcpe==0.0.4
 gdown==5.2.0
-git+https://github.com/One-sixth/fairseq.git
 ffmpeg-python==0.2.0
 
 boto3==1.40.18
+
+aiormq==6.9.0
+loguru==0.7.3
+
+

@@ -7,12 +7,12 @@ import aiormq
 from aiormq.abc import AbstractChannel
 from loguru import logger
 
+import env
 from env import RABBIT_CONNECTION
 from joke.joke_generator import JokeGenerator
 from mcpserver import JokeMcpServer
 
-joke_generator = JokeGenerator()
-
+joke_generator: JokeGenerator | None
 
 async def on_message(message: aiormq.abc.DeliveredMessage):
     logger.info(f'Message body is: {message.body!r}')
@@ -58,6 +58,11 @@ def run_loop_in_thread(loop):
 
 
 async def main():
+    logger.info('starting init joke generator')
+    global joke_generator
+    joke_generator = JokeGenerator(env.JOKE_LLM, env.JOKE_TTS_MODEL_PATH)
+    logger.info('joke generator inited')
+
     connection = await aiormq.connect(RABBIT_CONNECTION)
 
     channel = await connection.channel()
